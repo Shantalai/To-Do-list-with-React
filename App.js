@@ -6,24 +6,65 @@ import UserOutput from './UserOutput/UserOutput';
 class App extends Component {
   state = {
     users:[
-      {userName: 'not Ana'},
-      {userName: 'not Mike'},
-      {userName: 'not Oly'}
-    ]
+      {id: 'hd1', userName: 'not Ana'},
+      {id: 'we1', userName: 'not Mike'},
+      {id: 'z1', userName: 'not Oly'}
+    ],
+    showUsers: false
   }
 
-  switchNameHandler = () => {
+  switchNameHandler = (newUserName) => {
     // NOT CORRECT: this.state.users[0] = "Ana Ana Ana!";
     this.setState({
       users: [
         {userName: 'Ana Ana Ana!'},
-        {userName: 'Mikey Mikey'},
+        {userName: newUserName},
         {userName: 'Oly Oly!'}
       ]
     });
   }
 
+  onChangeHandler = (event) => {
+    this.setState({
+      users: [
+        {userName: event.target.value},
+        {userName: event.target.value},
+        {userName: event.target.value}
+      ]
+    });
+  }
+
+  toggleHandler = () => {
+    const doesShow = this.state.showUsers;
+    this.setState({showUsers: !doesShow});
+    
+  }
+
+  deleteUserHandler = (userIndex) => {
+    //const users = this.state.users.splice();
+    const users = [...this.state.users];
+    users.splice(userIndex, 1); 
+    this.setState({users: users});
+  }
+
   render() {
+
+    let users = null;
+
+    if(this.state.showUsers) {
+      users = (
+        <div>
+          {this.state.users.map((user, index) => {
+            return  <UserOutput
+                click={() => this.deleteUserHandler(index)} 
+                userName={user.userName}
+                key={user.id}/>
+           
+          })}
+           
+      </div>
+      );
+    }
     return (
       <div className="App">
         <ol>
@@ -38,17 +79,21 @@ class App extends Component {
           <li>Add two-way-binding to your input (in UserInput) to also display the starting username</li>
           <li>Add styling of your choice to your components/ elements in the components - both with inline styles and stylesheets</li>
         </ol>
-      <button onClick={this.switchNameHandler}>Switch user name</button>
-
-      <UserOutput userName={this.state.users[0].userName}/>
-      <UserInput />
-      <UserOutput userName={this.state.users[1].userName}/>
-      <UserInput />
-      <UserOutput userName={this.state.users[2].userName}/>
-      <UserInput />
+      <button onClick={this.switchNameHandler.bind(this, 'MM')}>Switch user name</button>
+      <button onClick={this.toggleHandler}>Show user</button>
+      {users}
       </div>
     );
   }
 }
 
 export default App;
+/*
+<UserOutput userName={this.state.users[0].userName}
+                       click={this.switchNameHandler.bind(this, 'mykeye')}/>
+           <UserInput change={this.onChangeHandler} />
+           <UserOutput userName={this.state.users[1].userName}/>
+           <UserInput change={this.onChangeHandler} />
+           <UserOutput userName={this.state.users[2].userName}/>
+           <UserInput change={this.onChangeHandler} />
+*/
