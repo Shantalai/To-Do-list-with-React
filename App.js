@@ -25,13 +25,16 @@ class App extends Component {
   }
 
   onChangeHandler = (event) => {
-    this.setState({
-      users: [
-        {userName: event.target.value},
-        {userName: event.target.value},
-        {userName: event.target.value}
-      ]
-    });
+    const userIndex = this.state.users.findIndex(p => {return p.id === id});
+
+    const user = { ...this.state.users[userIndex]};
+
+    user.userName = event.target.value;
+
+    const users = [...this.state.users];
+    users[userIndex] = user;
+
+    this.setState({users: users});
   }
 
   toggleHandler = () => {
@@ -56,7 +59,8 @@ class App extends Component {
         <div>
           {this.state.users.map((user, index) => {
             return  <UserOutput
-                click={() => this.deleteUserHandler(index)} 
+                click={() => this.deleteUserHandler(index)}
+                change={(event) => this.onChangeHandler(event, user.id)}
                 userName={user.userName}
                 key={user.id}/>
            
